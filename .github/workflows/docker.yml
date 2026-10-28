@@ -27,7 +27,7 @@ jobs:
 
       - name: Tests dans le conteneur
         run: docker run --rm ${{ env.IMAGE }}:ci python -m unittest -v
-      
+
       - name: Rapport Trivy (JSON)
         uses: aquasecurity/trivy-action@v0.36.0
         with:
@@ -36,12 +36,15 @@ jobs:
           output: trivy-report.json
           exit-code: "0"
 
+      - name: Telecharger le modele HTML Trivy
+        run: curl -sSfL -o html.tpl https://raw.githubusercontent.com/aquasecurity/trivy/v0.70.0/contrib/html.tpl
+
       - name: Rapport Trivy (HTML)
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: ${{ env.IMAGE }}:ci
           format: template
-          template: "@/contrib/html.tpl"
+          template: "@html.tpl"
           output: trivy-report.html
           exit-code: "0"
 
